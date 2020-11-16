@@ -1,17 +1,51 @@
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
+import java.util.function.Predicate;
+
 public class MyStructure implements IMyStructure {
-    
+
+  private List<INode> nodes = new LinkedList<>();
+
   @Override
   public INode findByCode(String code) {
-    return null;
+    if (code == null) {
+      throw new IllegalArgumentException("Code is null!");
+    }
+    return findByArgument(n -> code.equals(n.getCode()));
   }
 
   @Override
   public INode findByRenderer(String renderer) {
-    return null;
+    if (renderer == null) {
+      throw new IllegalArgumentException("Renderer is null!");
+    }
+    return findByArgument(n -> renderer.equals(n.getRenderer()));
+  }
+
+  private INode findByArgument(Predicate<INode> predicate) {
+    return nodes.stream().flatMap(INode::toStream).filter(predicate).findFirst().orElse(null);
   }
 
   @Override
   public int count() {
-    return 0;
+    return (int) nodes.stream().flatMap(INode::toStream).count();
+  }
+
+  public void addNode(Node node) {
+    nodes.add(node);
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    MyStructure that = (MyStructure) o;
+    return Objects.equals(nodes, that.nodes);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(nodes);
   }
 }
